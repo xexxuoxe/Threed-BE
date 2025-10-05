@@ -15,7 +15,11 @@ const port = 7000;
 
 // CORS 설정 - credentials 지원을 위해 구체적인 origin 설정
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://127.0.0.1:3000'], // 프론트엔드 주소
+  origin: [
+    'http://localhost:3000', 
+    'http://127.0.0.1:3000',
+    'https://threedblog.netlify.app'
+  ], // 프론트엔드 주소
   credentials: true, // 쿠키, 인증 헤더 등을 포함한 요청 허용
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
