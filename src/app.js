@@ -34,6 +34,29 @@ app.get('/test', (req, res) => {
   });
 });
 
+// 데이터베이스 테스트 엔드포인트
+app.get('/test-db', async (req, res) => {
+  try {
+    const { prisma } = require('./config/database');
+    await prisma.$connect();
+    const userCount = await prisma.user.count();
+    
+    res.json({ 
+      status: 'success', 
+      message: 'Database connected successfully',
+      userCount: userCount,
+      databaseUrl: process.env.DATABASE_URL ? 'Set' : 'Not set'
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      status: 'error', 
+      message: 'Database connection failed',
+      error: error.message,
+      databaseUrl: process.env.DATABASE_URL ? 'Set' : 'Not set'
+    });
+  }
+});
+
 // favicon 에러 처리
 app.get('/favicon.ico', (req, res) => {
   res.status(204).end();

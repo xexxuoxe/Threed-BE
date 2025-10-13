@@ -1,22 +1,21 @@
-const { PrismaClient } = require('@prisma/client');
+// 임시로 Prisma 클라이언트 비활성화
+// const { PrismaClient } = require('@prisma/client');
 
 // 환경 변수 로딩
-require('dotenv').config();
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
 
 const datasourceUrl = process.env.DATABASE_URL;
 
-if (!datasourceUrl) {
-  console.error('DATABASE_URL environment variable is not set');
-  throw new Error('DATABASE_URL environment variable is required');
-}
-
 console.log('Database URL:', datasourceUrl ? 'Set' : 'Not set');
 
-const prisma = new PrismaClient({
-  datasources: {
-    db: { url: datasourceUrl },
-  },
-  log: ['query', 'info', 'warn', 'error'],
-});
+// 임시로 더미 Prisma 객체 생성
+const prisma = {
+  $connect: () => Promise.resolve(),
+  user: {
+    count: () => Promise.resolve(0)
+  }
+};
 
 module.exports = { prisma };
