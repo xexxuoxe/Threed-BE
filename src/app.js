@@ -35,18 +35,30 @@ app.get('/', (req, res) => {
 // 데이터베이스 연결 테스트
 app.get('/test-db', async (req, res) => {
   try {
+    console.log('DATABASE_URL:', process.env.DATABASE_URL ? 'Set' : 'Not set');
     const { prisma } = require('./config/database');
+    
+    // 간단한 연결 테스트
+    await prisma.$connect();
+    console.log('Database connected successfully');
+    
+    // 테이블 존재 확인
     const userCount = await prisma.user.count();
+    console.log('User count:', userCount);
+    
     res.json({ 
       status: 'success', 
       message: 'Database connected successfully',
-      userCount: userCount 
+      userCount: userCount,
+      databaseUrl: process.env.DATABASE_URL ? 'Set' : 'Not set'
     });
   } catch (error) {
+    console.error('Database connection error:', error);
     res.status(500).json({ 
       status: 'error', 
       message: 'Database connection failed',
-      error: error.message 
+      error: error.message,
+      databaseUrl: process.env.DATABASE_URL ? 'Set' : 'Not set'
     });
   }
 });
