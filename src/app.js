@@ -4,11 +4,12 @@ const cors = require('cors');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 
-const postsRouter = require('./routes/posts');
-const popularRouter = require('./routes/popular');
-const authRouter = require('./routes/auth');
-const bookmarkRouter = require('./routes/bookmark');
-const membersRouter = require('./routes/members');
+// 임시로 라우터들 주석 처리
+// const postsRouter = require('./routes/posts');
+// const popularRouter = require('./routes/popular');
+// const authRouter = require('./routes/auth');
+// const bookmarkRouter = require('./routes/bookmark');
+// const membersRouter = require('./routes/members');
 
 const app = express();
 const port = 7000;
@@ -72,13 +73,13 @@ app.get('/test-db', async (req, res) => {
   }
 });
 
-// 라우트 설정
-app.use('/api/v1/member-posts', postsRouter); // 게시물 API (search, CRUD 포함)
-app.use('/api/v1/members', membersRouter); // 사용자 API
-app.use('/api/v1/bookmarks', bookmarkRouter); // 북마크 API
-app.use('/api/v1/auth', authRouter); // 인증 API
-app.use('/api/posts', postsRouter); // 기존 posts API
-app.use('/api/v1', popularRouter); // 나머지 v1 라우트 (popular 등)
+// 라우트 설정 - 임시로 주석 처리
+// app.use('/api/v1/member-posts', postsRouter); // 게시물 API (search, CRUD 포함)
+// app.use('/api/v1/members', membersRouter); // 사용자 API
+// app.use('/api/v1/bookmarks', bookmarkRouter); // 북마크 API
+// app.use('/api/v1/auth', authRouter); // 인증 API
+// app.use('/api/posts', postsRouter); // 기존 posts API
+// app.use('/api/v1', popularRouter); // 나머지 v1 라우트 (popular 등)
 
 // 404 fallback
 app.use((req, res, next) => {
