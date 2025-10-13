@@ -21,6 +21,7 @@
     "dev": "nodemon src/app.js",
     "start": "node src/app.js",
     "build": "prisma generate",
+    "postinstall": "prisma generate",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev --name init --create-only",
     "prisma:deploy": "prisma migrate deploy"
