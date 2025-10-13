@@ -32,6 +32,15 @@ app.get('/', (req, res) => {
   res.send('OK!!! Hello World!!!');
 });
 
+// 간단한 테스트 엔드포인트
+app.get('/test-simple', (req, res) => {
+  res.json({ 
+    status: 'success', 
+    message: 'Server is working',
+    timestamp: new Date().toISOString()
+  });
+});
+
 // 데이터베이스 연결 테스트
 app.get('/test-db', async (req, res) => {
   try {
