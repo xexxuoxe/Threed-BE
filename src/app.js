@@ -32,6 +32,25 @@ app.get('/', (req, res) => {
   res.send('OK!!! Hello World!!!');
 });
 
+// 데이터베이스 연결 테스트
+app.get('/test-db', async (req, res) => {
+  try {
+    const { prisma } = require('./config/database');
+    const userCount = await prisma.user.count();
+    res.json({ 
+      status: 'success', 
+      message: 'Database connected successfully',
+      userCount: userCount 
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      status: 'error', 
+      message: 'Database connection failed',
+      error: error.message 
+    });
+  }
+});
+
 // 라우트 설정
 app.use('/api/v1/member-posts', postsRouter); // 게시물 API (search, CRUD 포함)
 app.use('/api/v1/members', membersRouter); // 사용자 API
