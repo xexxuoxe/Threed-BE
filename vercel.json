@@ -12,5 +12,5 @@
       "dest": "src/app.js"
     }
   ],
-  "installCommand": "npm install && rm -rf node_modules/.prisma && npx prisma generate"
+  "installCommand": "npm install && rm -rf node_modules/@prisma && rm -rf node_modules/.prisma && npx prisma generate"
 }
