@@ -34,6 +34,15 @@ app.get('/test', (req, res) => {
   });
 });
 
+// favicon 에러 처리
+app.get('/favicon.ico', (req, res) => {
+  res.status(204).end();
+});
+
+app.get('/favicon.png', (req, res) => {
+  res.status(204).end();
+});
+
 // 라우트 설정 - 임시로 주석 처리
 // app.use('/api/v1/member-posts', postsRouter); // 게시물 API (search, CRUD 포함)
 // app.use('/api/v1/members', membersRouter); // 사용자 API
