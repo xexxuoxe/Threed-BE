@@ -1,5 +1,11 @@
 // 최소한의 Express 앱으로 테스트
 const express = require('express');
+
+// dotenv는 로컬에서만 로드
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
+
 const app = express();
 const port = 7000;
 
