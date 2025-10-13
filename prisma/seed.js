@@ -193,7 +193,7 @@ async function main() {
 
   // 샘플 북마크 생성 (일부 사용자가 일부 게시글을 북마크)
   const bookmarks = await Promise.all([
-    prisma.bookmark.create({
+    prisma.bomark.create({
       data: {
         userId: users[0].id,
         postId: posts[1].id

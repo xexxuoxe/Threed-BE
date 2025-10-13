@@ -29,7 +29,7 @@ app.use(cookieParser()); // 쿠키 파서 추가
 app.use(morgan('dev'));
 
 app.get('/', (req, res) => {
-  res.send('OK');
+  res.send('OK!!! Hello World!!!');
 });
 
 // 라우트 설정
