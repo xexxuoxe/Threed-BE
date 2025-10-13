@@ -1,33 +1,10 @@
-require('dotenv').config();
+// 최소한의 Express 앱으로 테스트
 const express = require('express');
-const cors = require('cors');
-const morgan = require('morgan');
-const cookieParser = require('cookie-parser');
-
-// 임시로 라우터들 주석 처리
-// const postsRouter = require('./routes/posts');
-// const popularRouter = require('./routes/popular');
-// const authRouter = require('./routes/auth');
-// const bookmarkRouter = require('./routes/bookmark');
-// const membersRouter = require('./routes/members');
-
 const app = express();
 const port = 7000;
 
-// CORS 설정 - credentials 지원을 위해 구체적인 origin 설정
-app.use(cors({
-  origin: [
-    'http://localhost:3000', 
-    'http://127.0.0.1:3000',
-    'https://threedblog.netlify.app'
-  ], // 프론트엔드 주소
-  credentials: true, // 쿠키, 인증 헤더 등을 포함한 요청 허용
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-}));
+// 기본 미들웨어만 사용
 app.use(express.json());
-app.use(cookieParser()); // 쿠키 파서 추가
-app.use(morgan('dev'));
 
 app.get('/', (req, res) => {
   res.send('OK!!! Hello World!!!');
@@ -42,35 +19,13 @@ app.get('/test-simple', (req, res) => {
   });
 });
 
-// 데이터베이스 연결 테스트
-app.get('/test-db', async (req, res) => {
-  try {
-    console.log('DATABASE_URL:', process.env.DATABASE_URL ? 'Set' : 'Not set');
-    const { prisma } = require('./config/database');
-    
-    // 간단한 연결 테스트
-    await prisma.$connect();
-    console.log('Database connected successfully');
-    
-    // 테이블 존재 확인
-    const userCount = await prisma.user.count();
-    console.log('User count:', userCount);
-    
-    res.json({ 
-      status: 'success', 
-      message: 'Database connected successfully',
-      userCount: userCount,
-      databaseUrl: process.env.DATABASE_URL ? 'Set' : 'Not set'
-    });
-  } catch (error) {
-    console.error('Database connection error:', error);
-    res.status(500).json({ 
-      status: 'error', 
-      message: 'Database connection failed',
-      error: error.message,
-      databaseUrl: process.env.DATABASE_URL ? 'Set' : 'Not set'
-    });
-  }
+// 간단한 테스트 엔드포인트
+app.get('/test', (req, res) => {
+  res.json({ 
+    status: 'success', 
+    message: 'Minimal Express app working',
+    timestamp: new Date().toISOString()
+  });
 });
 
 // 라우트 설정 - 임시로 주석 처리
