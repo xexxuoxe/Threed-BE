@@ -12,5 +12,5 @@
       "dest": "src/app.js"
     }
   ],
-  "installCommand": "npm install && npx prisma generate"
+  "installCommand": "npm install && npx prisma generate && npx prisma db push"
 }
