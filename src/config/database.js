@@ -1,7 +1,5 @@
 // 환경 변수 로딩
-if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config();
-}
+require('dotenv').config();
 
 const datasourceUrl = process.env.DATABASE_URL;
 console.log('Database URL:', datasourceUrl ? 'Set' : 'Not set');

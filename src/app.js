@@ -1,10 +1,8 @@
 // Express 앱을 Vercel 서버리스 함수로 변환
 const express = require('express');
 
-// dotenv는 로컬에서만 로드
-if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config();
-}
+// dotenv 로드 (로컬 개발용)
+require('dotenv').config();
 
 const app = express();
 
