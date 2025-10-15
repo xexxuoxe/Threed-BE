@@ -125,6 +125,19 @@ router.get('/popular', async (req, res) => {
     });
   } catch (error) {
     console.error('[popular] fetch error:', error);
+    
+    // 데이터베이스 연결 실패 시 더미 데이터 반환
+    if (error.message.includes("Can't reach database server")) {
+      console.log('Database connection failed, returning dummy data for popular posts');
+      return res.json({
+        elements: [],
+        pageNumber: 1,
+        pageSize: 10,
+        totalCount: 0,
+        totalPage: 1,
+      });
+    }
+    
     return res.status(500).json({ message: 'Failed to fetch popular posts' });
   }
 });
@@ -224,6 +237,19 @@ router.get('/search', async (req, res) => {
     });
   } catch (error) {
     console.error('[search] fetch error:', error);
+    
+    // 데이터베이스 연결 실패 시 더미 데이터 반환
+    if (error.message.includes("Can't reach database server")) {
+      console.log('Database connection failed, returning dummy data for search');
+      return res.json({
+        elements: [],
+        pageNumber: 1,
+        pageSize: 10,
+        totalCount: 0,
+        totalPage: 1,
+      });
+    }
+    
     return res.status(500).json({ message: 'Failed to fetch posts' });
   }
 });
