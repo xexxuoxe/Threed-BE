@@ -7,7 +7,7 @@ const { requireAuth } = require('../middleware/auth');
 const router = express.Router();
 
 // Google OAuth2 클라이언트 설정
-const frontendUrl = process.env.FRONTEND_URL || 'https://threedblog.netlify.app';
+const frontendUrl = process.env.FRONTEND_URL;
 const googleClient = new OAuth2Client(
   process.env.GOOGLE_CLIENT_ID,
   process.env.GOOGLE_CLIENT_SECRET,
@@ -69,17 +69,30 @@ router.get('/google/callback', async (req, res) => {
       };
 
       // 데이터베이스에서 사용자 찾기 또는 생성
-      let user = await prisma.user.findUnique({
-        where: { email: mockUser.email }
-      });
-
-      if (!user) {
-        user = await prisma.user.create({
-          data: mockUser
+      let user;
+      try {
+        user = await prisma.user.findUnique({
+          where: { email: mockUser.email }
         });
-        console.log('Created mock user:', user.id);
-      } else {
-        console.log('Using existing mock user:', user.id);
+
+        if (!user) {
+          user = await prisma.user.create({
+            data: mockUser
+          });
+          console.log('Created mock user:', user.id);
+        } else {
+          console.log('Using existing mock user:', user.id);
+        }
+      } catch (dbError) {
+        console.error('Database error in mock auth:', dbError);
+        // 데이터베이스 연결 실패 시 더미 사용자 반환
+        user = {
+          id: 1,
+          email: mockUser.email,
+          name: mockUser.name,
+          profileImg: mockUser.profileImg
+        };
+        console.log('Using dummy user due to database error');
       }
 
       // JWT 토큰 생성 (액세스 토큰 + 리프레시 토큰)
