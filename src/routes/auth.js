@@ -7,10 +7,11 @@ const { requireAuth } = require('../middleware/auth');
 const router = express.Router();
 
 // Google OAuth2 클라이언트 설정
+const frontendUrl = process.env.FRONTEND_URL || 'https://threedblog.netlify.app';
 const googleClient = new OAuth2Client(
   process.env.GOOGLE_CLIENT_ID,
   process.env.GOOGLE_CLIENT_SECRET,
-  process.env.FRONTEND_URL + '/auth/callback'
+  frontendUrl + '/auth/callback'
 );
 
 // JWT 토큰 생성 함수
@@ -204,6 +205,13 @@ router.get('/google/callback', async (req, res) => {
     if (error.message.includes('invalid_grant')) {
       return res.status(400).json({ 
         message: 'Invalid or expired authorization code' 
+      });
+    }
+    
+    if (error.message.includes('invalid_request')) {
+      return res.status(400).json({ 
+        message: 'OAuth configuration error. Please check Google OAuth settings.',
+        details: process.env.NODE_ENV === 'development' ? error.message : undefined
       });
     }
     
