@@ -10,9 +10,23 @@ const app = express();
 
 // CORS 미들웨어
 app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  const allowedOrigins = [
+    'https://threedblog.netlify.app',
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'http://127.0.0.1:3000'
+  ];
+  
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  } else {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+  }
+  
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
   
   if (req.method === 'OPTIONS') {
     res.status(200).end();
@@ -38,42 +52,6 @@ app.get('/', (req, res) => {
     timestamp: new Date().toISOString(),
     version: '1.0.0'
   });
-});
-
-// 헬스 체크 엔드포인트
-app.get('/health', async (req, res) => {
-  try {
-    const { prisma } = require('./config/database');
-    
-    // 서버리스 환경에서는 연결 테스트를 간단하게
-    const userCount = await prisma.user.count();
-    
-    res.json({ 
-      status: 'healthy',
-      message: 'Server and database are working',
-      timestamp: new Date().toISOString(),
-      database: {
-        connected: true,
-        userCount: userCount
-      },
-      environment: {
-        nodeEnv: process.env.NODE_ENV || 'development',
-        databaseUrl: process.env.DATABASE_URL ? 'Set' : 'Not set'
-      }
-    });
-  } catch (error) {
-    console.error('Health check failed:', error);
-    res.status(500).json({
-      status: 'unhealthy',
-      message: 'Server or database connection failed',
-      timestamp: new Date().toISOString(),
-      error: error.message,
-      environment: {
-        nodeEnv: process.env.NODE_ENV || 'development',
-        databaseUrl: process.env.DATABASE_URL ? 'Set' : 'Not set'
-      }
-    });
-  }
 });
 
 // API 라우트 설정
