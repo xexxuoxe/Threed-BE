@@ -11,19 +11,33 @@ let prisma;
 try {
   const { PrismaClient } = require('@prisma/client');
   
-  // Prisma 클라이언트 인스턴스 생성
+  // Prisma 클라이언트 인스턴스 생성 (서버리스 환경 최적화)
   prisma = new PrismaClient({
     log: process.env.NODE_ENV === 'development' ? ['query', 'info', 'warn', 'error'] : ['error'],
+    datasources: {
+      db: {
+        url: process.env.DATABASE_URL
+      }
+    },
+    // 서버리스 환경을 위한 연결 설정
+    __internal: {
+      engine: {
+        connectTimeout: 60000, // 60초
+        queryTimeout: 30000,   // 30초
+      }
+    }
   });
 
-  // 연결 테스트
-  prisma.$connect()
-    .then(() => {
-      console.log('Database connected successfully');
-    })
-    .catch((error) => {
-      console.error('Database connection failed:', error);
-    });
+  // 연결 테스트 (서버리스에서는 연결하지 않음)
+  if (process.env.NODE_ENV !== 'production') {
+    prisma.$connect()
+      .then(() => {
+        console.log('Database connected successfully');
+      })
+      .catch((error) => {
+        console.error('Database connection failed:', error);
+      });
+  }
 
 } catch (error) {
   console.error('Failed to initialize Prisma client:', error);

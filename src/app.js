@@ -44,7 +44,8 @@ app.get('/', (req, res) => {
 app.get('/health', async (req, res) => {
   try {
     const { prisma } = require('./config/database');
-    await prisma.$connect();
+    
+    // 서버리스 환경에서는 연결 테스트를 간단하게
     const userCount = await prisma.user.count();
     
     res.json({ 
