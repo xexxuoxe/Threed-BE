@@ -17,7 +17,11 @@ router.get('/', async (req, res) => {
     });
     res.json(posts);
   } catch (error) {
-    res.status(500).json({ message: 'Failed to fetch posts' });
+    console.error('Failed to fetch posts:', error);
+    res.status(500).json({ 
+      message: 'Failed to fetch posts',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 });
 
