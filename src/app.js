@@ -103,6 +103,14 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: 'Internal Server Error' });
 });
 
+// 로컬 개발용 포트 설정
+if (process.env.NODE_ENV !== 'production') {
+  const port = process.env.PORT || 7000;
+  app.listen(port, () => {
+    console.log(`App running on port ${port}...`);
+  });
+}
+
 // Vercel 서버리스 함수로 export
 module.exports = app;
 
