@@ -37,7 +37,9 @@ router.get('/', async (req, res) => {
 // GET /api/v1/member-posts/popular - 인기 게시물
 router.get('/popular', async (req, res) => {
   try {
+    // condition은 무조건 대문자로 정규화
     const { condition = 'WEEK' } = req.query; // 'WEEK' | 'MONTH' | 'ALL'
+    const normalizedCondition = String(condition).toUpperCase();
     // 인기글은 고정 5개 반환 (페이지네이션 미사용)
     const pageNumber = 1;
     const pageSize = 5;
@@ -50,11 +52,11 @@ router.get('/popular', async (req, res) => {
     };
     
     // condition이 있을 때만 날짜 필터 적용 (기본값은 모든 게시물)
-    if (condition && condition !== 'ALL') {
+    if (normalizedCondition && normalizedCondition !== 'ALL') {
       const dateFilter = new Date();
-      if (condition === 'WEEK') {
+      if (normalizedCondition === 'WEEK') {
         dateFilter.setDate(dateFilter.getDate() - 7);
-      } else if (condition === 'MONTH') {
+      } else if (normalizedCondition === 'MONTH') {
         dateFilter.setMonth(dateFilter.getMonth() - 1);
       }
       where.createdAt = { gte: dateFilter };
@@ -89,7 +91,7 @@ router.get('/popular', async (req, res) => {
     const elements = posts.map((post) => {
       const now = new Date();
       const createdAt = new Date(post.createdAt);
-      const isNew = condition === 'WEEK'
+      const isNew = normalizedCondition === 'WEEK'
         ? (now - createdAt) <= 7 * 24 * 60 * 60 * 1000
         : (now - createdAt) <= 30 * 24 * 60 * 60 * 1000;
 
@@ -178,7 +180,8 @@ router.get('/search', async (req, res) => {
 
     // 필드 필터링
     if (fields) {
-      const fieldArray = Array.isArray(fields) ? fields : [fields];
+      const fieldArrayRaw = Array.isArray(fields) ? fields : [fields];
+      const fieldArray = fieldArrayRaw.map(v => String(v).toUpperCase());
       where.field = {
         in: fieldArray.map(field => JSON.stringify([field]))
       };
@@ -186,7 +189,8 @@ router.get('/search', async (req, res) => {
 
     // 스킬 필터링
     if (skills) {
-      const skillArray = Array.isArray(skills) ? skills : [skills];
+      const skillArrayRaw = Array.isArray(skills) ? skills : [skills];
+      const skillArray = skillArrayRaw.map(v => String(v).toUpperCase());
       where.skills = {
         in: skillArray.map(skill => JSON.stringify([skill]))
       };
