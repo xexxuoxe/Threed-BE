@@ -178,22 +178,24 @@ router.get('/search', async (req, res) => {
       ];
     }
 
-    // 필드 필터링
+    // 필드 필터링 (대소문자 무시, 다중값 OR)
     if (fields) {
       const fieldArrayRaw = Array.isArray(fields) ? fields : [fields];
-      const fieldArray = fieldArrayRaw.map(v => String(v).toUpperCase());
-      where.field = {
-        in: fieldArray.map(field => JSON.stringify([field]))
-      };
+      const fieldConditions = fieldArrayRaw.map(v => ({
+        field: { contains: `"${String(v)}"`, mode: 'insensitive' }
+      }));
+      where.AND = where.AND || [];
+      where.AND.push({ OR: fieldConditions });
     }
 
-    // 스킬 필터링
+    // 스킬 필터링 (대소문자 무시, 다중값 OR)
     if (skills) {
       const skillArrayRaw = Array.isArray(skills) ? skills : [skills];
-      const skillArray = skillArrayRaw.map(v => String(v).toUpperCase());
-      where.skills = {
-        in: skillArray.map(skill => JSON.stringify([skill]))
-      };
+      const skillConditions = skillArrayRaw.map(v => ({
+        skills: { contains: `"${String(v)}"`, mode: 'insensitive' }
+      }));
+      where.AND = where.AND || [];
+      where.AND.push({ OR: skillConditions });
     }
 
     const [totalCount, posts] = await Promise.all([
