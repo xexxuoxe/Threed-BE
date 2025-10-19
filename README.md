@@ -54,7 +54,7 @@
 다음 환경 변수들을 Vercel 대시보드에서 설정해야 합니다:
 
 ```env
-DATABASE_URL="postgresql://username:password@host:port/database"
+DATABASE_DEFULT_URL="postgresql://username:password@host:port/database"
 JWT_SECRET="your-super-secret-jwt-key"
 GOOGLE_CLIENT_ID="your-google-client-id"
 GOOGLE_CLIENT_SECRET="your-google-client-secret"

@@ -137,7 +137,7 @@ router.get('/google/callback', async (req, res) => {
     const name = payload.name;
     const profileImg = payload.picture;
 
-    console.log('Google user info:', { googleId, email, name });
+    console.log('Google user info:', { googleId, email, name, profileImg });
 
     // 데이터베이스에서 사용자 찾기 또는 생성
     let user = await prisma.user.findUnique({

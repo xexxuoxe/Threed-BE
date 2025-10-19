@@ -37,41 +37,54 @@ router.get('/', async (req, res) => {
 // GET /api/v1/member-posts/popular - 인기 게시물
 router.get('/popular', async (req, res) => {
   try {
-    const { condition = 'WEEK' } = req.query; // 'WEEK' | 'MONTH'
-    const { pageNumber = 1, pageSize = 10 } = req.query;
-    const skip = (Number(pageNumber) - 1) * Number(pageSize);
-    const take = Number(pageSize);
+    const { condition = 'WEEK' } = req.query; // 'WEEK' | 'MONTH' | 'ALL'
+    // 인기글은 고정 5개 반환 (페이지네이션 미사용)
+    const pageNumber = 1;
+    const pageSize = 5;
+    const skip = 0;
+    const take = 5;
 
-    // 기간별 필터링
-    const dateFilter = new Date();
-    if (condition === 'WEEK') {
-      dateFilter.setDate(dateFilter.getDate() - 7);
-    } else if (condition === 'MONTH') {
-      dateFilter.setMonth(dateFilter.getMonth() - 1);
+    // 기간별 필터링 (더 유연하게 설정)
+    const where = {
+      published: true
+    };
+    
+    // condition이 있을 때만 날짜 필터 적용 (기본값은 모든 게시물)
+    if (condition && condition !== 'ALL') {
+      const dateFilter = new Date();
+      if (condition === 'WEEK') {
+        dateFilter.setDate(dateFilter.getDate() - 7);
+      } else if (condition === 'MONTH') {
+        dateFilter.setMonth(dateFilter.getMonth() - 1);
+      }
+      where.createdAt = { gte: dateFilter };
     }
 
-    const where = {
-      published: true,
-      createdAt: {
-        gte: dateFilter
-      }
-    };
+    // 1차: 기간 내 조회수 TOP 5
+    let posts = await prisma.post.findMany({
+      where,
+      orderBy: [
+        { viewCount: 'desc' },
+        { createdAt: 'desc' }
+      ],
+      skip,
+      take,
+      include: {
+        author: { select: { name: true, profileImg: true } },
+      },
+    });
 
-    const [totalCount, posts] = await Promise.all([
-      prisma.post.count({ where }),
-      prisma.post.findMany({
-        where,
-        orderBy: [
-          { viewCount: 'desc' }, // 조회수 높은 순
-          { createdAt: 'desc' }  // 최신순
-        ],
-        skip,
-        take,
+    // 예외: 모두 조회수가 0이면 최신글 5개로 대체
+    if (posts.length > 0 && posts.every(p => (p.viewCount || 0) === 0)) {
+      posts = await prisma.post.findMany({
+        where: { published: true },
+        orderBy: { createdAt: 'desc' },
+        take: 5,
         include: {
           author: { select: { name: true, profileImg: true } },
         },
-      }),
-    ]);
+      });
+    }
 
     const elements = posts.map((post) => {
       const now = new Date();
@@ -114,7 +127,8 @@ router.get('/popular', async (req, res) => {
       };
     });
 
-    const totalPage = Math.ceil(totalCount / pageSize) || 1;
+    const totalCount = posts.length;
+    const totalPage = 1;
 
     return res.json({
       elements,

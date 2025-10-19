@@ -1,13 +1,11 @@
-// Express 앱을 Vercel 서버리스 함수로 변환
 const express = require('express');
-
-// dotenv 로드 (로컬 개발용만)
-if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config();
-}
-
 const app = express();
+const path = require('path');
 
+// 환경 변수 로딩 (로컬 개발용만)
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
+}
 // CORS 미들웨어
 app.use((req, res, next) => {
   const allowedOrigins = [

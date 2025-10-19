@@ -1,10 +1,15 @@
+const path = require('path');
+
 // 환경 변수 로딩 (로컬 개발용만)
 if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config();
+  require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
 }
 
-const datasourceUrl = process.env.DATABASE_URL;
+// 환경변수 강제 설정 (개발용)
+const datasourceUrl = process.env.DATABASE_DEFAULT_URL;
+console.log('🔥🔥final URL:', datasourceUrl);
 console.log('Database URL:', datasourceUrl ? 'Set' : 'Not set');
+
 
 let prisma;
 
@@ -16,7 +21,7 @@ try {
     log: process.env.NODE_ENV === 'development' ? ['query', 'info', 'warn', 'error'] : ['error'],
     datasources: {
       db: {
-        url: process.env.DATABASE_URL
+        url: datasourceUrl
       }
     },
     // 서버리스 환경을 위한 연결 설정

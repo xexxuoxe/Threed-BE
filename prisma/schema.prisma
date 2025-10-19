@@ -5,8 +5,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_DEFAULT_URL")
+  directUrl = env("DIRECT_DEFAULT_URL")
 }
 
 model User {
@@ -15,35 +16,35 @@ model User {
   email        String     @unique
   name         String
   profileImg   String?
-  refreshToken String?    // 리프레시 토큰 저장
-  posts        Post[]
+  refreshToken String?
+  createdAt    DateTime?  @default(now())
   bookmarks    Bookmark[]
-  createdAt    DateTime   @default(now())
+  posts        Post[]
 }
 
 model Post {
-  id                 Int        @id @default(autoincrement())
-  title              String
-  content            String
-  thumbnailImageUrl  String?
-  field              String?    @default("[]")
-  skills             String?    @default("[]")
-  viewCount          Int        @default(0)
-  published          Boolean    @default(true)
-  author             User       @relation(fields: [authorId], references: [id])
-  authorId           Int
-  bookmarks          Bookmark[]
-  createdAt          DateTime   @default(now())
-  updatedAt          DateTime   @updatedAt
+  id                Int        @id @default(autoincrement())
+  title             String
+  content           String
+  thumbnailImageUrl String?
+  field             String?    @default("[]")
+  skills            String?    @default("[]")
+  viewCount         Int?       @default(0)
+  published         Boolean?   @default(true)
+  authorId          Int
+  createdAt         DateTime?  @default(now())
+  updatedAt         DateTime?  @default(now()) @updatedAt
+  bookmarks         Bookmark[]
+  author            User       @relation(fields: [authorId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model Bookmark {
-  id        Int      @id @default(autoincrement())
-  user      User     @relation(fields: [userId], references: [id])
+  id        Int       @id @default(autoincrement())
   userId    Int
-  post      Post     @relation(fields: [postId], references: [id])
   postId    Int
-  createdAt DateTime @default(now())
+  createdAt DateTime? @default(now())
+  post      Post      @relation(fields: [postId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user      User      @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@unique([userId, postId])
 }
