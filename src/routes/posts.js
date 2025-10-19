@@ -112,12 +112,12 @@ router.get('/popular', async (req, res) => {
       return {
         id: post.id,
         title: post.title,
-        thumbnailImageUrl: post.thumbnailImageUrl,
+        thumbnailImageUrl: post.thumbnailImageUrl || '',
         field: fieldArray,
         viewCount: post.viewCount || 0,
         author: {
           name: post.author?.name ?? 'Unknown',
-          imageUrl: post.author?.profileImg ?? null,
+          imageUrl: post.author?.profileImg || '',
         },
         skills: skillsArray,
         createdAt: post.createdAt,
@@ -371,7 +371,7 @@ router.post('/', async (req, res) => {
       data: {
         title: title || '임시 제목',
         content: content || '임시 내용',
-        thumbnailImageUrl,
+        thumbnailImageUrl: thumbnailImageUrl || null,
         field: JSON.stringify(field ? [field] : []),
         skills: JSON.stringify(Array.isArray(skills) ? skills : []),
         published: true, // 테스트용으로 발행
@@ -632,11 +632,11 @@ router.get('/:id', async (req, res) => {
       id: post.id,
       title: post.title,
       content: post.content,
-      thumbnailImageUrl: post.thumbnailImageUrl,
+      thumbnailImageUrl: post.thumbnailImageUrl || '',
       sourceUrl: post.sourceUrl,
       author: {
         name: post.author.name,
-        imageUrl: post.author.profileImg
+        imageUrl: post.author.profileImg || ''
       },
       viewCount: (post.viewCount || 0) + 1,
       createdAt: post.createdAt.toISOString(),
